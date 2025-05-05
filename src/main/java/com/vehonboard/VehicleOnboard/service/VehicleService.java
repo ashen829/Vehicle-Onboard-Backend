@@ -24,7 +24,7 @@ public class VehicleService {
             return new ApiResponse<>(false, "Vehicle with same Registration number already Exists!", null);
         }
         Vehicle savedVehicle = vehicleRepository.save(v);
-        return new ApiResponse<>(true, "Vehicle saved successfully", savedVehicle);
+        return new ApiResponse<>(true, "Vehicle saved successfully!", savedVehicle);
     }
 
 

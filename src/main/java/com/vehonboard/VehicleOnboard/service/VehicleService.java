@@ -90,7 +90,7 @@ public class VehicleService {
 
         vehicle.setVehicleImages(vehicleImages);
         vehicleRepository.save(vehicle);
-        return new ApiResponse<>(true, "Vehicle Added Successfully", vehicle);
+        return new ApiResponse<>(true, "Vehicle Added Successfully", null);
 
     }
 

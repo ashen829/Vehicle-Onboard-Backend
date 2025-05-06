@@ -1,6 +1,7 @@
 package com.vehonboard.VehicleOnboard.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.vehonboard.VehicleOnboard.Util.VehicleType;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -12,28 +13,21 @@ public class Model {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-
     @ManyToOne
     private Make make;
 
-    @ManyToOne
-    @JsonBackReference
-    private Category category;
-
-    public Make getMake() {
-        return make;
-    }
-
-    public void setMake(Make make) {
+    public Model(String name, VehicleType vehicleType, Make make) {
+        this.name = name;
+        this.vehicleType = vehicleType;
         this.make = make;
     }
 
-    public int getId() {
-        return id;
+    public VehicleType getVehicleType() {
+        return vehicleType;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setVehicleType(VehicleType vehicleType) {
+        this.vehicleType = vehicleType;
     }
 
     public String getName() {
@@ -44,13 +38,23 @@ public class Model {
         this.name = name;
     }
 
-    public Category getCategory() {
-        return category;
+    public Make getMake() {
+        return make;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setMake(Make make) {
+        this.make = make;
     }
+
+    private VehicleType vehicleType;
+
+
+
+
+
+
+
+
 
 
 }

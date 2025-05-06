@@ -35,6 +35,10 @@ public class Vehicle {
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VehicleImage> vehicleImages;
 
+    public Vehicle(){
+
+    }
+
     public Vehicle(int id, String regNo, Make make, Model model, Integer yearOfManu, FuelType fuelType, VehicleType vehicleType, List<VehicleImage> vehicleImages) {
         this.id = id;
         this.regNo = regNo;

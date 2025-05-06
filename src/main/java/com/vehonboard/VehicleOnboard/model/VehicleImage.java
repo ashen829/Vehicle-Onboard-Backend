@@ -18,6 +18,9 @@ public class VehicleImage {
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
+    public VehicleImage(){}
+
+
     public VehicleImage(Long id, ImageTag tag, String imageUrl, Vehicle vehicle) {
         this.id = id;
         this.tag = tag;

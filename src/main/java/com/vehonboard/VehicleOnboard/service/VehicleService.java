@@ -2,12 +2,11 @@ package com.vehonboard.VehicleOnboard.service;
 
 import com.vehonboard.VehicleOnboard.Util.ImageTag;
 import com.vehonboard.VehicleOnboard.dto.MakeDto;
+import com.vehonboard.VehicleOnboard.dto.ModelDto;
 import com.vehonboard.VehicleOnboard.dto.NewVehicleDto;
-import com.vehonboard.VehicleOnboard.model.ApiResponse;
-import com.vehonboard.VehicleOnboard.model.Make;
-import com.vehonboard.VehicleOnboard.model.Vehicle;
-import com.vehonboard.VehicleOnboard.model.VehicleImage;
+import com.vehonboard.VehicleOnboard.model.*;
 import com.vehonboard.VehicleOnboard.repository.MakeRepository;
+import com.vehonboard.VehicleOnboard.repository.ModelRepository;
 import com.vehonboard.VehicleOnboard.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -33,10 +32,12 @@ public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
     private final MakeRepository makeRepository;
+    private final ModelRepository modelRepository;
 
-    public VehicleService (VehicleRepository vehicleRepository, MakeRepository makeRepository){
+    public VehicleService (VehicleRepository vehicleRepository, MakeRepository makeRepository, ModelRepository modelRepository){
         this.vehicleRepository = vehicleRepository;
         this.makeRepository = makeRepository;
+        this.modelRepository= modelRepository;
     }
 
     @Transactional
@@ -100,6 +101,21 @@ public class VehicleService {
         } catch (IOException e) {
             return new ApiResponse<>(false, "Failed to save logo: " + e.getMessage(), null);
         }
+    }
+
+    public ApiResponse<Model> saveModel(ModelDto dto) {
+        Optional<Make> makeOpt = makeRepository.findById(dto.getMakeId());
+        if (makeOpt.isEmpty()) {
+            return new ApiResponse<>(false, "Make not found", null);
+        }
+
+        Model model = new Model();
+        model.setName(dto.getName());
+        model.setMake(makeOpt.get());
+        model.setVehicleType(dto.getVehicleType());
+
+        modelRepository.save(model);
+        return new ApiResponse<>(true, "Model saved successfully", model);
     }
 
 }

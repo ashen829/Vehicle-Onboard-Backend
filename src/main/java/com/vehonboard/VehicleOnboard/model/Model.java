@@ -16,6 +16,10 @@ public class Model {
     @ManyToOne
     private Make make;
 
+    private VehicleType vehicleType;
+
+    public Model(){}
+
     public Model(String name, VehicleType vehicleType, Make make) {
         this.name = name;
         this.vehicleType = vehicleType;
@@ -46,7 +50,7 @@ public class Model {
         this.make = make;
     }
 
-    private VehicleType vehicleType;
+
 
 
 

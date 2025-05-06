@@ -2,11 +2,9 @@ package com.vehonboard.VehicleOnboard.controller;
 
 import com.vehonboard.VehicleOnboard.Util.ImageTag;
 import com.vehonboard.VehicleOnboard.dto.MakeDto;
+import com.vehonboard.VehicleOnboard.dto.ModelDto;
 import com.vehonboard.VehicleOnboard.dto.NewVehicleDto;
-import com.vehonboard.VehicleOnboard.model.ApiResponse;
-import com.vehonboard.VehicleOnboard.model.Make;
-import com.vehonboard.VehicleOnboard.model.Vehicle;
-import com.vehonboard.VehicleOnboard.model.VehicleImage;
+import com.vehonboard.VehicleOnboard.model.*;
 import com.vehonboard.VehicleOnboard.repository.VehicleRepository;
 import com.vehonboard.VehicleOnboard.service.VehicleService;
 import org.springframework.http.HttpStatus;
@@ -53,6 +51,13 @@ public class VehicleController {
         ApiResponse<Make> response = vehicleService.saveMake(makeDto);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/models")
+    public ResponseEntity<?> saveModel(@RequestBody ModelDto modelDto) {
+        ApiResponse<Model> response = vehicleService.saveModel(modelDto);
+        return ResponseEntity.ok(response);
+    }
+
 
 
 }

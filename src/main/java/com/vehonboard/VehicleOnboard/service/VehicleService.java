@@ -47,12 +47,23 @@ public class VehicleService {
             return new ApiResponse<>(false, "Vehicle with same Registration number already Exists!", null);
         }
 
+        Optional<Model> modelOpt = modelRepository.findById(dto.getModelId());
+        if (modelOpt.isEmpty()) {
+            return new ApiResponse<>(false, "Model not found", null);
+        }
+
+        Optional<Make> makeOpt = makeRepository.findById(dto.getMakeId());
+        if (makeOpt.isEmpty()) {
+            return new ApiResponse<>(false, "Make not found", null);
+        }
+
         Vehicle vehicle = new Vehicle();
         vehicle.setRegNo(dto.getRegNo());
-        vehicle.setMake(dto.getMake());
-        vehicle.setModel(dto.getModel());
+        vehicle.setMake(makeOpt.get());
+        vehicle.setModel(modelOpt.get());
         vehicle.setFuelType(dto.getFuelType());
         vehicle.setYearOfManu(dto.getYearOfManu());
+        vehicle.setVehicleType(modelOpt.get().getVehicleType());
 
         List<VehicleImage> vehicleImages = new ArrayList<>();
         try{

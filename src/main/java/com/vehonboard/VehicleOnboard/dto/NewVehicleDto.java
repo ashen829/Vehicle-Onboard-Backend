@@ -12,16 +12,16 @@ import jakarta.persistence.ManyToOne;
 public class NewVehicleDto {
 
     private String regNo;
-    private Make make;
-    private Model model;
+    private Integer makeId;
+    private Integer modelId;
     private Integer yearOfManu;
     private FuelType fuelType;
     private VehicleType vehicleType;
 
-    public NewVehicleDto(String regNo, Make make, Model model, Integer yearOfManu, FuelType fuelType, VehicleType vehicleType) {
+    public NewVehicleDto(String regNo, Integer makeId, Integer modelId, Integer yearOfManu, FuelType fuelType, VehicleType vehicleType) {
         this.regNo = regNo;
-        this.make = make;
-        this.model = model;
+        this.makeId = makeId;
+        this.modelId = modelId;
         this.yearOfManu = yearOfManu;
         this.fuelType = fuelType;
         this.vehicleType = vehicleType;
@@ -51,14 +51,6 @@ public class NewVehicleDto {
         this.yearOfManu = yearOfManu;
     }
 
-    public Model getModel() {
-        return model;
-    }
-
-    public void setModel(Model model) {
-        this.model = model;
-    }
-
     public String getRegNo() {
         return regNo;
     }
@@ -67,13 +59,21 @@ public class NewVehicleDto {
         this.regNo = regNo;
     }
 
-    public Make getMake() {
-        return make;
+
+    public Integer getMakeId() {
+        return makeId;
     }
 
-    public void setMake(Make make) {
-        this.make = make;
+    public void setMakeId(Integer makeId) {
+        this.makeId = makeId;
     }
 
+    public Integer getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(Integer modelId) {
+        this.modelId = modelId;
+    }
 
 }

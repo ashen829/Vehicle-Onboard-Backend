@@ -16,6 +16,7 @@ public class Model {
     @ManyToOne
     private Make make;
 
+    @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
 
     public Model(){}

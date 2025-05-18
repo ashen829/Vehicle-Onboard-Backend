@@ -1,9 +1,7 @@
 package com.vehonboard.VehicleOnboard.service;
 
 import com.vehonboard.VehicleOnboard.Util.ImageTag;
-import com.vehonboard.VehicleOnboard.dto.MakeDto;
-import com.vehonboard.VehicleOnboard.dto.ModelDto;
-import com.vehonboard.VehicleOnboard.dto.NewVehicleDto;
+import com.vehonboard.VehicleOnboard.dto.*;
 import com.vehonboard.VehicleOnboard.model.*;
 import com.vehonboard.VehicleOnboard.repository.MakeRepository;
 import com.vehonboard.VehicleOnboard.repository.ModelRepository;
@@ -73,7 +71,7 @@ public class VehicleService {
                 ImageTag tag = tags.get(i);
 
                 String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-                Path filePath = Paths.get(uploadDir + fileName);
+                Path filePath = Paths.get(uploadDir , fileName);
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, image.getBytes());
 
@@ -128,5 +126,88 @@ public class VehicleService {
         modelRepository.save(model);
         return new ApiResponse<>(true, "Model saved successfully", model);
     }
+
+
+    public ApiResponse<List<ViewVehicleDto>> getAllVehicles() {
+        try {
+            List<Vehicle> vehicles = vehicleRepository.findAll();
+            List<ViewVehicleDto> dtoList = new ArrayList<>();
+            for (Vehicle v : vehicles) {
+                dtoList.add(convertToViewVehicleDto(v));
+            }
+            return new ApiResponse<>(true, "Vehicles retrieved successfully", dtoList);
+        } catch (Exception e) {
+            return new ApiResponse<>(false, "Error fetching vehicles: " + e.getMessage(), null);
+        }
+    }
+
+    public ApiResponse<ViewVehicleDto> getVehicleById(int id) {
+        Optional<Vehicle> vehicleOpt = vehicleRepository.findById(id);
+        if (vehicleOpt.isPresent()) {
+            ViewVehicleDto dto = convertToViewVehicleDto(vehicleOpt.get());
+            return new ApiResponse<>(true, "Vehicle found", dto);
+        } else {
+            return new ApiResponse<>(false, "Vehicle not found with ID: " + id, null);
+        }
+    }
+
+
+    private ViewVehicleDto convertToViewVehicleDto(Vehicle vehicle) {
+        ViewVehicleDto dto = new ViewVehicleDto();
+        dto.setId(vehicle.getId());
+        dto.setRegNo(vehicle.getRegNo());
+        dto.setMake(vehicle.getMake());
+        dto.setModel(vehicle.getModel());
+        dto.setYearOfManu(vehicle.getYearOfManu());
+        dto.setFuelType(vehicle.getFuelType());
+        dto.setVehicleType(vehicle.getVehicleType());
+        List<ImageDto> imageDtos = new ArrayList<>();
+        for (VehicleImage image : vehicle.getVehicleImages()) {
+            ImageDto imageDto = new ImageDto(image);
+            imageDtos.add(imageDto);
+        }
+        dto.setVehicleImages(imageDtos);
+        return dto;
+    }
+
+    public ApiResponse<List<ViewMakeDto>> getAllMakes() {
+        try {
+            List<Make> makes = makeRepository.findAll();
+            List<ViewMakeDto> dtoList = new ArrayList<>();
+
+            for (Make make : makes) {
+                ViewMakeDto dto = new ViewMakeDto();
+                dto.setName(make.getName());
+                dto.setLogoPath(make.getLogoPath());
+                dtoList.add(dto);
+            }
+
+            return new ApiResponse<>(true, "Makes retrieved successfully", dtoList);
+        } catch (Exception e) {
+            return new ApiResponse<>(false, "Error fetching makes: " + e.getMessage(), null);
+        }
+    }
+
+    public ApiResponse<List<ViewModelDto>> getAllModels() {
+        try {
+            List<Model> models = modelRepository.findAll();
+            List<ViewModelDto> dtoList = new ArrayList<>();
+
+            for (Model model : models) {
+                ViewModelDto dto = new ViewModelDto();
+                dto.setName(model.getName());
+                dto.setVehicleType(model.getVehicleType());
+                dtoList.add(dto);
+            }
+
+            return new ApiResponse<>(true, "Models retrieved successfully", dtoList);
+        } catch (Exception e) {
+            return new ApiResponse<>(false, "Error fetching models: " + e.getMessage(), null);
+        }
+    }
+
+
+
+
 
 }

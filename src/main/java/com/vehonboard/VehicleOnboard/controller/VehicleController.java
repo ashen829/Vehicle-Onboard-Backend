@@ -1,9 +1,7 @@
 package com.vehonboard.VehicleOnboard.controller;
 
 import com.vehonboard.VehicleOnboard.Util.ImageTag;
-import com.vehonboard.VehicleOnboard.dto.MakeDto;
-import com.vehonboard.VehicleOnboard.dto.ModelDto;
-import com.vehonboard.VehicleOnboard.dto.NewVehicleDto;
+import com.vehonboard.VehicleOnboard.dto.*;
 import com.vehonboard.VehicleOnboard.model.*;
 import com.vehonboard.VehicleOnboard.repository.VehicleRepository;
 import com.vehonboard.VehicleOnboard.service.VehicleService;
@@ -16,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/vehicles")
 public class VehicleController {
@@ -31,6 +30,9 @@ public class VehicleController {
             @ModelAttribute NewVehicleDto vehicleDto,
             @RequestParam("images") List<MultipartFile> images,
             @RequestParam("tags") List<ImageTag> tags) {
+
+        System.out.println(vehicleDto.getMakeId());
+        System.out.println(vehicleDto.getModelId());
 
         if (images.size() != tags.size()) {
             return ResponseEntity.badRequest()
@@ -57,6 +59,31 @@ public class VehicleController {
         ApiResponse<Model> response = vehicleService.saveModel(modelDto);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/vehicles")
+    public ResponseEntity<ApiResponse<List<ViewVehicleDto>>> getAllVehicles() {
+        return ResponseEntity.ok(vehicleService.getAllVehicles());
+    }
+
+    @GetMapping("/vehicles/{id}")
+    public ResponseEntity<ApiResponse<ViewVehicleDto>> getVehicleById(@PathVariable int id) {
+        return ResponseEntity.ok(vehicleService.getVehicleById(id));
+    }
+
+    // Get all makes
+    @GetMapping("/makes")
+    public ResponseEntity<ApiResponse<List<ViewMakeDto>>> getAllMakes() {
+        ApiResponse<List<ViewMakeDto>> response = vehicleService.getAllMakes();
+        return new ResponseEntity<>(response, response.isStatus() ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    }
+
+    // Get all models
+    @GetMapping("/models")
+    public ResponseEntity<ApiResponse<List<ViewModelDto>>> getAllModels() {
+        ApiResponse<List<ViewModelDto>> response = vehicleService.getAllModels();
+        return new ResponseEntity<>(response, response.isStatus() ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    }
+
 
 
 

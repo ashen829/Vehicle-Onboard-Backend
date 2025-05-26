@@ -156,7 +156,7 @@ public class VehicleService {
         ViewVehicleDto dto = new ViewVehicleDto();
         dto.setId(vehicle.getId());
         dto.setRegNo(vehicle.getRegNo());
-        dto.setMake(vehicle.getMake());
+        dto.setMake(dto.convertToMakeDto(vehicle.getMake()));
         dto.setModel(vehicle.getModel());
         dto.setYearOfManu(vehicle.getYearOfManu());
         dto.setFuelType(vehicle.getFuelType());
@@ -175,10 +175,16 @@ public class VehicleService {
             List<Make> makes = makeRepository.findAll();
             List<ViewMakeDto> dtoList = new ArrayList<>();
 
+            String baseUrl = "http://172.20.10.3:8080/data/";
+
             for (Make make : makes) {
                 ViewMakeDto dto = new ViewMakeDto();
+                dto.setId(make.getId());
                 dto.setName(make.getName());
-                dto.setLogoPath(make.getLogoPath());
+                String fileName = Paths.get(make.getLogoPath()).getFileName().toString();
+                String fullLogoPath = baseUrl +fileName ;
+                dto.setLogoPath(fullLogoPath);
+
                 dtoList.add(dto);
             }
 
@@ -188,6 +194,7 @@ public class VehicleService {
         }
     }
 
+
     public ApiResponse<List<ViewModelDto>> getAllModels() {
         try {
             List<Model> models = modelRepository.findAll();
@@ -195,6 +202,7 @@ public class VehicleService {
 
             for (Model model : models) {
                 ViewModelDto dto = new ViewModelDto();
+                dto.setId(model.getMake().getId());
                 dto.setName(model.getName());
                 dto.setVehicleType(model.getVehicleType());
                 dtoList.add(dto);
@@ -205,6 +213,60 @@ public class VehicleService {
             return new ApiResponse<>(false, "Error fetching models: " + e.getMessage(), null);
         }
     }
+
+    @Transactional
+    public ApiResponse<String> deleteVehicleById(int id) {
+        Optional<Vehicle> vehicleOpt = vehicleRepository.findById(id);
+        if (vehicleOpt.isEmpty()) {
+            return new ApiResponse<>(false, "Vehicle not found with ID: " + id, null);
+        }
+
+        Vehicle vehicle = vehicleOpt.get();
+
+        // Optionally delete image files from the file system
+        for (VehicleImage image : vehicle.getVehicleImages()) {
+            try {
+                Files.deleteIfExists(Paths.get(image.getImageUrl()));
+            } catch (IOException e) {
+                return new ApiResponse<>(false, "Failed to delete image: " + e.getMessage(), null);
+            }
+        }
+
+        vehicleRepository.delete(vehicle);
+        return new ApiResponse<>(true, "Vehicle deleted successfully", null);
+    }
+
+
+    @Transactional
+    public ApiResponse<Vehicle> updateVehicle(int id, NewVehicleDto dto) {
+        Optional<Vehicle> vehicleOpt = vehicleRepository.findById(id);
+        if (vehicleOpt.isEmpty()) {
+            return new ApiResponse<>(false, "Vehicle not found with ID: " + id, null);
+        }
+
+        Optional<Model> modelOpt = modelRepository.findById(dto.getModelId());
+        Optional<Make> makeOpt = makeRepository.findById(dto.getMakeId());
+
+        if (modelOpt.isEmpty()) {
+            return new ApiResponse<>(false, "Model not found", null);
+        }
+        if (makeOpt.isEmpty()) {
+            return new ApiResponse<>(false, "Make not found", null);
+        }
+
+        Vehicle vehicle = vehicleOpt.get();
+        vehicle.setRegNo(dto.getRegNo());
+        vehicle.setModel(modelOpt.get());
+        vehicle.setMake(makeOpt.get());
+        vehicle.setYearOfManu(dto.getYearOfManu());
+        vehicle.setFuelType(dto.getFuelType());
+        vehicle.setVehicleType(modelOpt.get().getVehicleType());
+
+        vehicleRepository.save(vehicle);
+        return new ApiResponse<>(true, "Vehicle updated successfully", null);
+    }
+
+
 
 
 

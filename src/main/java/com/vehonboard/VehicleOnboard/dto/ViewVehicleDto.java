@@ -7,13 +7,14 @@ import com.vehonboard.VehicleOnboard.model.Model;
 import com.vehonboard.VehicleOnboard.model.VehicleImage;
 import jakarta.persistence.*;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 public class ViewVehicleDto {
 
     private int id;
     private String regNo;
-    private Make make;
+    private ViewMakeDto make;
     private Model model;
     private Integer yearOfManu;
     private FuelType fuelType;
@@ -21,7 +22,7 @@ public class ViewVehicleDto {
     private List<ImageDto> vehicleImages;
 
     public ViewVehicleDto() {}
-    public ViewVehicleDto(int id, String regNo, Make make, Model model, Integer yearOfManu, FuelType fuelType, VehicleType vehicleType, List<ImageDto> vehicleImages) {
+    public ViewVehicleDto(int id, String regNo, ViewMakeDto make, Model model, Integer yearOfManu, FuelType fuelType, VehicleType vehicleType, List<ImageDto> vehicleImages) {
         this.id = id;
         this.regNo = regNo;
         this.make = make;
@@ -30,6 +31,16 @@ public class ViewVehicleDto {
         this.fuelType = fuelType;
         this.vehicleType = vehicleType;
         this.vehicleImages = vehicleImages;
+    }
+
+    public ViewMakeDto convertToMakeDto(Make make){
+        ViewMakeDto dto = new ViewMakeDto();
+          String baseUrl = "http://172.20.10.3:8080/data/";
+          String fileName = Paths.get(make.getLogoPath()).getFileName().toString();
+          String fullLogoPath = baseUrl +fileName ;
+          dto.setLogoPath(fullLogoPath);
+          dto.setName(make.getName());
+          return dto;
     }
 
     public Integer getYearOfManu() {
@@ -56,11 +67,12 @@ public class ViewVehicleDto {
         this.regNo = regNo;
     }
 
-    public Make getMake() {
+    public ViewMakeDto getMake() {
         return make;
     }
 
-    public void setMake(Make make) {
+    public void setMake(ViewMakeDto make) {
+
         this.make = make;
     }
 

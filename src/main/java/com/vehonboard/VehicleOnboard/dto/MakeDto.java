@@ -3,6 +3,9 @@ package com.vehonboard.VehicleOnboard.dto;
 import org.springframework.web.multipart.MultipartFile;
 
 public class MakeDto {
+    private String name;
+    private MultipartFile logo;
+
     public String getName() {
         return name;
     }
@@ -19,6 +22,4 @@ public class MakeDto {
         this.logo = logo;
     }
 
-    private String name;
-    private MultipartFile logo;
 }

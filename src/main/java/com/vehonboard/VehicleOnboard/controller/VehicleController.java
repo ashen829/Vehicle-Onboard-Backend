@@ -84,6 +84,17 @@ public class VehicleController {
         return new ResponseEntity<>(response, response.isStatus() ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteVehicle(@PathVariable int id) {
+        return ResponseEntity.ok(vehicleService.deleteVehicleById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<Vehicle>> updateVehicle(@PathVariable int id, @ModelAttribute NewVehicleDto dto) {
+        return ResponseEntity.ok(vehicleService.updateVehicle(id, dto));
+    }
+
+
 
 
 

@@ -11,9 +11,9 @@ public class ImageDto {
     private String imageUrl;
 
     public ImageDto(VehicleImage image) {
+        this.id = image.getId();
         this.tag = image.getTag();
-        String fileName = Paths.get(image.getImageUrl()).getFileName().toString();
-        this.imageUrl = "http://172.20.10.3:8080/data/" + fileName;
+        this.imageUrl = image.getImageUrl();
     }
 
     public ImageDto() {

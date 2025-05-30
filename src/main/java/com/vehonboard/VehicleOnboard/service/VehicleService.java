@@ -28,6 +28,9 @@ public class VehicleService {
     @Value("${vehicle.image.upload-dir}")
     private String uploadDir;
 
+    @Value("${public.base-url}")
+    private String baseUrl;
+
     private final VehicleRepository vehicleRepository;
     private final MakeRepository makeRepository;
     private final ModelRepository modelRepository;
@@ -75,8 +78,10 @@ public class VehicleService {
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, image.getBytes());
 
+                String publicUrl = baseUrl + "/" + fileName;
+
                 VehicleImage vehicleImage = new VehicleImage();
-                vehicleImage.setImageUrl(filePath.toString());
+                vehicleImage.setImageUrl(publicUrl);
                 vehicleImage.setTag(tag);
                 vehicleImage.setVehicle(vehicle);
                 vehicleImages.add(vehicleImage);
@@ -100,13 +105,15 @@ public class VehicleService {
             Files.createDirectories(filePath.getParent());
             Files.write(filePath, logo.getBytes());
 
+            String publicUrl = baseUrl + "/" + fileName;
+
             Make make = new Make();
             make.setName(dto.getName());
-            make.setLogoPath(filePath.toString());
+            make.setLogoPath(publicUrl);
 
             makeRepository.save(make);
 
-            return new ApiResponse<>(true, "Make saved successfully", make);
+            return new ApiResponse<>(true, "Make saved successfully!", make);
         } catch (IOException e) {
             return new ApiResponse<>(false, "Failed to save logo: " + e.getMessage(), null);
         }
@@ -175,15 +182,11 @@ public class VehicleService {
             List<Make> makes = makeRepository.findAll();
             List<ViewMakeDto> dtoList = new ArrayList<>();
 
-            String baseUrl = "http://172.20.10.3:8080/data/";
-
             for (Make make : makes) {
                 ViewMakeDto dto = new ViewMakeDto();
                 dto.setId(make.getId());
                 dto.setName(make.getName());
-                String fileName = Paths.get(make.getLogoPath()).getFileName().toString();
-                String fullLogoPath = baseUrl +fileName ;
-                dto.setLogoPath(fullLogoPath);
+                dto.setLogoPath(make.getLogoPath());
 
                 dtoList.add(dto);
             }
@@ -223,7 +226,6 @@ public class VehicleService {
 
         Vehicle vehicle = vehicleOpt.get();
 
-        // Optionally delete image files from the file system
         for (VehicleImage image : vehicle.getVehicleImages()) {
             try {
                 Files.deleteIfExists(Paths.get(image.getImageUrl()));

@@ -6,11 +6,16 @@ import com.vehonboard.VehicleOnboard.model.Make;
 import com.vehonboard.VehicleOnboard.model.Model;
 import com.vehonboard.VehicleOnboard.model.VehicleImage;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.file.Paths;
 import java.util.List;
 
+
 public class ViewVehicleDto {
+
+    @Value("${vehicle.image.upload-dir}")
+    private String uploadDir;
 
     private int id;
     private String regNo;
@@ -35,10 +40,7 @@ public class ViewVehicleDto {
 
     public ViewMakeDto convertToMakeDto(Make make){
         ViewMakeDto dto = new ViewMakeDto();
-          String baseUrl = "http://172.20.10.3:8080/data/";
-          String fileName = Paths.get(make.getLogoPath()).getFileName().toString();
-          String fullLogoPath = baseUrl +fileName ;
-          dto.setLogoPath(fullLogoPath);
+          dto.setLogoPath(make.getLogoPath());
           dto.setName(make.getName());
           return dto;
     }
